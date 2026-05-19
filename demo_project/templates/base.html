@@ -26,10 +26,12 @@
                     </a>
                 {% endif %}
                 <span class="text-white">
-                    <i class="fas fa-user-circle"></i> {{ user.username }}
+                   <img src="{% static 'images/User.svg' %}" alt="Пользователь" height="15">
+                    {{ user.username }}
                 </span>
                 <a href="{% url 'logout' %}" class="btn btn-outline-light btn-sm">
-                    <i class="fas fa-sign-out-alt"></i> Выйти
+                    <img src="{% static 'images/Exit.svg' %}" alt="Выход" height="20">
+                    Выйти
                 </a>
             </div>
             {% endif %}

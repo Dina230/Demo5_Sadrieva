@@ -139,7 +139,6 @@ def create_request(request):
 @login_required
 @user_passes_test(is_admin26)
 def admin_panel(request):
-    """Панель администратора (только для Admin26)"""
     # Получаем все заявки
     requests_list = CourseRequest.objects.all().order_by('-created_at')
 
