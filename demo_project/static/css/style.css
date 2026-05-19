@@ -1,0 +1,151 @@
+/* Три размера шрифта */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-size: 16px;
+    background-color: #ced4da;
+    font-family: 'Inter';
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main.container {
+    flex: 1 0 auto;
+}
+
+.navbar {
+  background-color: #007bff;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto;
+    background-color: #007bff;
+}
+
+h1, .display-6 {
+    font-family: 'Inter'
+    font-size: 36px;
+    font-weight: 600;
+}
+
+h1.group {
+    font-size: 36px;
+}
+
+h2, .h4 {
+    font-size: 24px;
+    font-weight: 600;
+}
+
+h3 {
+    font-size: 1.1rem;
+}
+
+/* Анимации */
+.animate__animated {
+    animation-duration: 0.5s;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: none;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* Слайдер */
+.carousel-item img {
+    transition: transform 0.3s ease;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-size: 60%;
+    opacity: 0.8;
+}
+
+/* Формы */
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+input, select, textarea {
+    transition: all 0.2s ease;
+}
+
+/* Адаптивность под 390x844 */
+@media (max-width: 390px) {
+    body {
+        font-size: 14px;
+    }
+
+    h1, .display-6 {
+        font-size: 1.5rem;
+    }
+
+    .container {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .table {
+        font-size: 12px;
+    }
+
+    .carousel-item img {
+        height: 200px !important;
+    }
+}
+
+/* Кастомный скролл */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Микроанимации */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

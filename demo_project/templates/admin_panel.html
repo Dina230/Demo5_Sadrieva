@@ -1,10 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% block title %}Панель администратора{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h1 class="h3 mb-0">Панель администратора</h1>
+            </div>
+            <div class="card-body">
+                <!-- Фильтры и сортировка -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <form method="get" class="d-flex gap-2">
+                            <select name="status" class="form-select">
+                                <option value="">Все статусы</option>
+                                <option value="new" {% if current_status == 'new' %}selected{% endif %}>Новая</option>
+                                <option value="in_progress" {% if current_status == 'in_progress' %}selected{% endif %}>Идёт обучение</option>
+                                <option value="completed" {% if current_status == 'completed' %}selected{% endif %}>Завершено</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-filter"></i> Фильтр
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="btn-group">
+                            <a href="?sort=-created_at" class="btn btn-outline-secondary">По дате ↓</a>
+                            <a href="?sort=user" class="btn btn-outline-secondary">По пользователю</a>
+                            <a href="?sort=course_type" class="btn btn-outline-secondary">По курсу</a>
+                        </div>
+                    </div>
+                </div>
 
-</body>
-</html>
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>ID</th>
+                                <th>Пользователь</th>
+                                <th>Курс</th>
+                                <th>Дата старта</th>
+                                <th>Оплата</th>
+                                <th>Статус</th>
+                                <th>Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in requests %}
+                            <tr>
+                                <td>#{{ req.id }}</td>
+                                <td>{{ req.user.username }}<br><small>{{ req.user.email }}</small></td>
+                                <td>{{ req.get_course_type_display }}</td>
+                                <td>{{ req.start_date|date:"d.m.Y" }}</td>
+                                <td>{{ req.get_payment_method_display }}</td>
+                                <td>
+                                    {% if req.status == 'new' %}
+                                        <span class="badge bg-warning text-dark">Новая</span>
+                                    {% elif req.status == 'in_progress' %}
+                                        <span class="badge bg-info">Идёт обучение</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Завершено</span>
+                                    {% endif %}
+                                 </td>
+                                <td>
+                                    <form method="post" class="status-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="request_id" value="{{ req.id }}">
+                                        <div class="d-flex gap-2">
+                                            <select name="status" class="form-select form-select-sm">
+                                                <option value="new" {% if req.status == 'new' %}selected{% endif %}>Новая</option>
+                                                <option value="in_progress" {% if req.status == 'in_progress' %}selected{% endif %}>Идёт обучение</option>
+                                                <option value="completed" {% if req.status == 'completed' %}selected{% endif %}>Завершено</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-save"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                 </td>
+                             </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center">Нет заявок</td>
+                             </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {% if requests.has_other_pages %}
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        {% if requests.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page={{ requests.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">«</a></li>
+                        {% endif %}
+                        {% for num in requests.paginator.page_range %}
+                            <li class="page-item {% if requests.number == num %}active{% endif %}">
+                                <a class="page-link" href="?page={{ num }}{% if current_status %}&status={{ current_status }}{% endif %}">{{ num }}</a>
+                            </li>
+                        {% endfor %}
+                        {% if requests.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ requests.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">»</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

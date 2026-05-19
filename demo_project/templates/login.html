@@ -1,10 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5 col-12">
+        <!-- Опциональная картинка над формой (раскомментируй если нужно) -->
+        <!-- <div class="text-center mb-3">
+            <img src="{% static 'images/login-icon.png' %}" alt="Вход" height="60">
+        </div> -->
 
-</body>
-</html>
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h4 mb-0"><i class="fas fa-key"></i> Вход в систему</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Логин</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Пароль</label>
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                       Войти
+                    </button>
+                </form>
+                <hr>
+                <p class="text-center mb-0">
+                    <a href="{% url 'register' %}" class="text-decoration-none">
+                       Ещё не зарегистрированы? Регистрация
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

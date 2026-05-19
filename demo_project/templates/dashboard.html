@@ -1,10 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Личный кабинет{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <!-- Слайдер -->
+        <div class="slider-wrapper mb-5">
+            <div id="mainSlider" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+                <div class="carousel-inner rounded-4 shadow">
+                    <div class="carousel-item active">
+                        <img src="{% static 'images/slide1.jpg' %}" class="d-block w-100" alt="Обучение" style="height: 250px; object-fit: cover;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'images/slide2.jpg' %}" class="d-block w-100" alt="Курсы" style="height: 250px; object-fit: cover;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'images/slide3.jpg' %}" class="d-block w-100" alt="Сертификаты" style="height: 250px; object-fit: cover;">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="{% static 'images/slide4.jpg' %}" class="d-block w-100" alt="Поддержка" style="height: 250px; object-fit: cover;">
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#mainSlider" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#mainSlider" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h1 class="group mb-0">Мои заявки</h1>
+            </div>
+            <div class="card-body">
+                {% if requests %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Курс</th>
+                                    <th>Дата начала</th>
+                                    <th>Оплата</th>
+                                    <th>Статус</th>
+                                    <th>Отзыв</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                <tr class="animate__animated animate__fadeIn">
+                                    <td><strong>{{ req.get_course_type_display }}</strong></td>
+                                    <td>{{ req.start_date|date:"d.m.Y" }}</td>
+                                    <td>{{ req.get_payment_method_display }}</td>
+                                    <td>
+                                        {% if req.status == 'new' %}
+                                            <span class="badge bg-warning text-dark">Новая</span>
+                                        {% elif req.status == 'in_progress' %}
+                                            <span class="badge bg-info">Идёт обучение</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Завершено</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if req.status == 'completed' %}
+                                            {% if req.id in reviews_exists %}
+                                                <div class="text-success">
+                                                    <i class="fas fa-check-circle"></i> Отзыв оставлен
+                                                </div>
+                                                <small class="text-muted">{{ req.review.text|truncatechars:50 }}</small>
+                                            {% else %}
+                                                <form method="post" class="review-form">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="request_id" value="{{ req.id }}">
+                                                    <textarea name="review_text" class="form-control form-control-sm mb-1" rows="2" placeholder="Ваш отзыв о курсе..."></textarea>
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-paper-plane"></i> Оставить отзыв
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted small">
+                                                <i class="fas fa-lock"></i> Отзыв доступен после завершения курса
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 
-</body>
-</html>
+                    <!-- Пагинация -->
+                    {% if requests.has_other_pages %}
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            {% if requests.has_previous %}
+                                <li class="page-item"><a class="page-link" href="?page={{ requests.previous_page_number }}">«</a></li>
+                            {% endif %}
+                            {% for num in requests.paginator.page_range %}
+                                <li class="page-item {% if requests.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                            {% if requests.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{ requests.next_page_number }}">»</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                {% else %}
+                    <div class="alert alert-info text-center">
+
+                        <p>У вас пока нет заявок. Создайте первую!</p>
+                    </div>
+                {% endif %}
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'create_request' %}" class="btn btn-primary btn-lg">
+                        Новая заявка на курс
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
